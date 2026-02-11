@@ -25,13 +25,14 @@
 	},
 	"files": [
 		"dist",
-		"README.md"
+		"README.md",
+		"schema.json"
 	],
 	"scripts": {
 		"build": "tsup",
 		"dev": "tsup --watch",
-		"test": "vitest run",
-		"test:watch": "vitest",
+		"test": "bun test",
+		"test:watch": "bun test --watch",
 		"typecheck": "tsc --noEmit",
 		"check": "biome check --fix"
 	},
@@ -47,7 +48,7 @@
 		"@types/node": "^25.2.3",
 		"tsup": "^8.4.0",
 		"typescript": "^5.7.0",
-		"vitest": "^3.0.0"
+		"@types/bun": "^1.2.0"
 	},
 	"engines": {
 		"node": ">=20"

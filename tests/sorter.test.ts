@@ -1,5 +1,5 @@
+import { beforeAll, describe, expect, it } from "bun:test";
 import path from "node:path";
-import { beforeAll, describe, expect, it } from "vitest";
 import { type DesignSystem, loadDesignSystem } from "../src/design-system.js";
 import { applyFixes } from "../src/fixer.js";
 import { findUnsortedClasses } from "../src/sorter.js";
