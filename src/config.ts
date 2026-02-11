@@ -24,6 +24,10 @@ export interface ResolvedConfig {
 
 const CONFIG_FILENAME = "nyx.config.json";
 
+export function isLocalInstall(base: string): boolean {
+	return fs.existsSync(path.join(base, "node_modules", "@rielj", "nyx"));
+}
+
 export function loadConfigFile(base: string): NyxConfigFile | null {
 	const configPath = path.join(base, CONFIG_FILENAME);
 	if (!fs.existsSync(configPath)) return null;
@@ -46,7 +50,9 @@ export function resolveConfig(
 	},
 	configFile: NyxConfigFile | null,
 	rawArgs: string[],
+	base: string,
 ): ResolvedConfig {
+	const hasExplicitCache = rawArgs.includes("--cache");
 	const hasExplicitNoCache = rawArgs.includes("--no-cache");
 
 	const defaults: ResolvedConfig = {
@@ -54,7 +60,7 @@ export function resolveConfig(
 		rem: 16,
 		collapse: false,
 		strategy: "tailwind",
-		cache: false,
+		cache: isLocalInstall(base),
 		fix: false,
 		json: false,
 		quiet: false,
@@ -85,9 +91,11 @@ export function resolveConfig(
 	if (cliArgs.json !== undefined) config.json = cliArgs.json;
 	if (cliArgs.quiet !== undefined) config.quiet = cliArgs.quiet;
 	if (cliArgs.verbose !== undefined) config.verbose = cliArgs.verbose;
-	if (cliArgs.cache !== undefined) config.cache = cliArgs.cache;
 
-	// --no-cache explicitly overrides config
+	// Cache: only override via explicit CLI flags (citty always provides a
+	// default for booleans, so we check rawArgs to distinguish "user passed
+	// --cache" from "citty default false")
+	if (hasExplicitCache) config.cache = true;
 	if (hasExplicitNoCache) config.cache = false;
 
 	return config;

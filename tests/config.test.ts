@@ -1,7 +1,7 @@
+import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import {
 	hashConfig,
 	loadConfigFile,
@@ -42,9 +42,10 @@ describe("loadConfigFile", () => {
 describe("resolveConfig", () => {
 	const emptyCli = {};
 	const emptyRawArgs: string[] = [];
+	const noLocalBase = "/tmp/nyx-no-local";
 
 	it("uses defaults when no config or CLI args", () => {
-		const config = resolveConfig(emptyCli, null, emptyRawArgs);
+		const config = resolveConfig(emptyCli, null, emptyRawArgs, noLocalBase);
 		expect(config.rem).toBe(16);
 		expect(config.collapse).toBe(false);
 		expect(config.strategy).toBe("tailwind");
@@ -61,7 +62,12 @@ describe("resolveConfig", () => {
 			collapse: true,
 			strategy: "alphabetical" as const,
 		};
-		const config = resolveConfig(emptyCli, configFile, emptyRawArgs);
+		const config = resolveConfig(
+			emptyCli,
+			configFile,
+			emptyRawArgs,
+			noLocalBase,
+		);
 		expect(config.rem).toBe(14);
 		expect(config.collapse).toBe(true);
 		expect(config.strategy).toBe("alphabetical");
@@ -70,7 +76,12 @@ describe("resolveConfig", () => {
 	it("CLI args override config file values", () => {
 		const configFile = { rem: 14, collapse: true };
 		const cliArgs = { rem: "20", collapse: false };
-		const config = resolveConfig(cliArgs, configFile, emptyRawArgs);
+		const config = resolveConfig(
+			cliArgs,
+			configFile,
+			emptyRawArgs,
+			noLocalBase,
+		);
 		expect(config.rem).toBe(20);
 		expect(config.collapse).toBe(false);
 	});
@@ -79,19 +90,39 @@ describe("resolveConfig", () => {
 		const configFile = { cache: true };
 		const cliArgs = {};
 		const rawArgs = ["--no-cache", "src/"];
-		const config = resolveConfig(cliArgs, configFile, rawArgs);
+		const config = resolveConfig(cliArgs, configFile, rawArgs, noLocalBase);
 		expect(config.cache).toBe(false);
 	});
 
 	it("config cache: true is preserved when --no-cache not present", () => {
 		const configFile = { cache: true };
-		const config = resolveConfig(emptyCli, configFile, emptyRawArgs);
+		const config = resolveConfig(
+			emptyCli,
+			configFile,
+			emptyRawArgs,
+			noLocalBase,
+		);
 		expect(config.cache).toBe(true);
 	});
 
 	it("CLI --cache flag enables cache", () => {
-		const config = resolveConfig({ cache: true }, null, emptyRawArgs);
+		const config = resolveConfig({}, null, ["--cache"], noLocalBase);
 		expect(config.cache).toBe(true);
+	});
+
+	it("defaults cache to true when nyx is locally installed", () => {
+		const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "nyx-local-test-"));
+		fs.mkdirSync(path.join(tmpDir, "node_modules", "@rielj", "nyx"), {
+			recursive: true,
+		});
+		const config = resolveConfig(emptyCli, null, emptyRawArgs, tmpDir);
+		fs.rmSync(tmpDir, { recursive: true, force: true });
+		expect(config.cache).toBe(true);
+	});
+
+	it("defaults cache to false when nyx is not locally installed", () => {
+		const config = resolveConfig(emptyCli, null, emptyRawArgs, noLocalBase);
+		expect(config.cache).toBe(false);
 	});
 });
 
