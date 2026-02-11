@@ -1,11 +1,15 @@
-export { loadDesignSystem } from './design-system.js'
-export type { DesignSystem } from './design-system.js'
-export { extractCandidatesWithPositions, createScanner } from './scanner.js'
-export type { CandidateWithPosition, SourceEntry } from './scanner.js'
-export { findNonCanonicalClasses } from './canonicalize.js'
-export type { Diagnostic, CanonicalizeOptions } from './canonicalize.js'
-export { applyFixes } from './fixer.js'
-export { findUnsortedClasses } from './sorter.js'
-export type { SortStrategy, SortOptions } from './sorter.js'
-export { formatDiagnostics } from './reporter.js'
-export type { ReporterOptions } from './reporter.js'
+export type { CacheData, CacheFileEntry, CacheManager } from "./cache.js";
+export { createCache, createNoopCache } from "./cache.js";
+export type { CanonicalizeOptions, Diagnostic } from "./canonicalize.js";
+export { findNonCanonicalClasses } from "./canonicalize.js";
+export type { NyxConfigFile, ResolvedConfig } from "./config.js";
+export { hashConfig, loadConfigFile, resolveConfig } from "./config.js";
+export type { DesignSystem } from "./design-system.js";
+export { loadDesignSystem, resolveCssPath } from "./design-system.js";
+export { applyFixes } from "./fixer.js";
+export type { ReporterOptions } from "./reporter.js";
+export { formatDiagnostics } from "./reporter.js";
+export type { CandidateWithPosition, SourceEntry } from "./scanner.js";
+export { createScanner, extractCandidatesWithPositions } from "./scanner.js";
+export type { SortOptions, SortStrategy } from "./sorter.js";
+export { findUnsortedClasses } from "./sorter.js";
