@@ -10,38 +10,48 @@ Built on top of `@tailwindcss/oxide` and the Tailwind v4 design system.
 npm install -g @rielj/nyx
 ```
 
-## Usage
+## Quick start
 
-### Check (lint + format)
+```bash
+nyx init        # scaffold nyx.config.json
+nyx check src/  # lint + format check
+nyx check --fix src/  # auto-fix
+```
+
+## Commands
+
+### `nyx init`
+
+Create a `nyx.config.json` in the current directory with default settings:
+
+```bash
+nyx init
+```
+
+### `nyx check`
+
+Run both lint and format checks:
 
 ```bash
 nyx check src/
-nyx check "src/**/*.tsx"
+nyx check --fix src/
 ```
 
-### Lint
+### `nyx lint`
 
 Find non-canonical Tailwind classes (e.g. `tw-bg-red-500` -> `bg-red-500`):
 
 ```bash
 nyx lint src/
+nyx lint --fix src/
 ```
 
-### Format
+### `nyx format`
 
 Sort Tailwind classes in the recommended order:
 
 ```bash
 nyx format src/
-```
-
-### Auto-fix
-
-Add `--fix` to any command to write changes to disk:
-
-```bash
-nyx check --fix src/
-nyx lint --fix src/
 nyx format --fix src/
 ```
 
@@ -54,8 +64,33 @@ nyx format --fix src/
 | `--strategy <name>` | Sort strategy: `tailwind` (default) or `alphabetical` |
 | `--rem <px>` | Root font size in px (default: 16) |
 | `--collapse` | Collapse e.g. `mt-2 mr-2 mb-2 ml-2` into `m-2` |
+| `--cache` | Enable file-level caching to skip unchanged files |
 | `--json` | Output diagnostics as JSON |
 | `--quiet` | Only show summary |
+| `--verbose` | Show full diagnostics in fix mode |
+
+## Config file
+
+Create a `nyx.config.json` in your project root (or run `nyx init`):
+
+```json
+{
+  "$schema": "./node_modules/@rielj/nyx/schema.json",
+  "rem": 16,
+  "collapse": false,
+  "strategy": "tailwind"
+}
+```
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `css` | `string` | auto-detect | Path to CSS entry point |
+| `rem` | `number` | `16` | Root font size in px |
+| `collapse` | `boolean` | `false` | Collapse longhand utilities into shorthand |
+| `strategy` | `"tailwind" \| "alphabetical"` | `"tailwind"` | Class sort strategy |
+| `cache` | `boolean` | auto | Enable file-level caching (on by default when nyx is locally installed) |
+
+CLI flags override config file values.
 
 ## Supported file types
 

@@ -192,13 +192,45 @@ const check = defineCommand({
 	},
 });
 
+const CONFIG_FILENAME = "nyx.config.json";
+
+const init = defineCommand({
+	meta: { name: "init", description: "Create a nyx.config.json file" },
+	args: {},
+	run: async () => {
+		const configPath = path.resolve(process.cwd(), CONFIG_FILENAME);
+
+		if (fs.existsSync(configPath)) {
+			console.log(
+				pc.yellow(`${CONFIG_FILENAME} already exists at ${configPath}`),
+			);
+			process.exit(0);
+		}
+
+		const defaultConfig = {
+			$schema: "./node_modules/@rielj/nyx/schema.json",
+			rem: 16,
+			collapse: false,
+			strategy: "tailwind",
+		};
+
+		fs.writeFileSync(
+			configPath,
+			`${JSON.stringify(defaultConfig, null, 2)}\n`,
+			"utf-8",
+		);
+
+		console.log(pc.green(`Created ${CONFIG_FILENAME} at ${configPath}`));
+	},
+});
+
 const main = defineCommand({
 	meta: {
 		name: "nyx",
 		version: "0.1.0",
 		description: "Tailwind CSS class formatter and linter",
 	},
-	subCommands: { format, lint, check },
+	subCommands: { format, lint, check, init },
 });
 
 async function run(
@@ -221,7 +253,7 @@ async function run(
 
 	// Load config file and resolve with CLI args
 	const configFile = loadConfigFile(base);
-	const config = resolveConfig(args, configFile, rawArgs);
+	const config = resolveConfig(args, configFile, rawArgs, base);
 
 	const mode = config.fix ? "fix" : "check";
 

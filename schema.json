@@ -1,0 +1,38 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"title": "Nyx Configuration",
+	"description": "Configuration file for @rielj/nyx — Tailwind CSS class formatter and linter",
+	"type": "object",
+	"properties": {
+		"$schema": {
+			"type": "string",
+			"description": "Path or URL to the nyx JSON Schema"
+		},
+		"css": {
+			"type": "string",
+			"description": "Path to the CSS entry point. If omitted, nyx auto-detects the Tailwind CSS entry point."
+		},
+		"rem": {
+			"type": "number",
+			"description": "Root font size in px used for canonical class resolution.",
+			"default": 16
+		},
+		"collapse": {
+			"type": "boolean",
+			"description": "Collapse longhand utilities (e.g. mt-2 mr-2 mb-2 ml-2) into shorthand (m-2).",
+			"default": false
+		},
+		"strategy": {
+			"type": "string",
+			"enum": ["tailwind", "alphabetical"],
+			"description": "Sort strategy for class ordering.",
+			"default": "tailwind"
+		},
+		"cache": {
+			"type": "boolean",
+			"description": "Enable file-level caching to skip unchanged files on subsequent runs.",
+			"default": false
+		}
+	},
+	"additionalProperties": false
+}
