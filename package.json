@@ -9,7 +9,7 @@
 		"email": "bulaybulay.rielj@gmail.com",
 		"url": "https://rielj.xyz"
 	},
-	"version": "0.0.5",
+	"version": "0.0.6",
 	"description": "Tailwind CSS canonical class fixer CLI",
 	"type": "module",
 	"bin": {
